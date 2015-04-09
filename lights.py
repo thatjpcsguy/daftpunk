@@ -1,29 +1,23 @@
 import time
 import random
 from beautifulhue.api import Bridge
-
-
-class Colour():
-    purple = 52000
-    blue = 46920
-    green = 25500
-    red = 0
-
+from colour import Color
 
 class DaftPunk():
     bridge = None
     lights = None
-    colour = None
     sleep = None
     lines = None
 
-    def __init__(self, bridge):
-        self.colour = Colour()
+    def __init__(self, bridge, sleep = 1):
         self.bridge = bridge
-        self.sleep = .4
+        self.sleep = sleep
         self.transitiontime = 1
         self.lights = {'E2': 16, 'G7': 9, 'G6': 6, 'G5': 3, 'G4': 36, 'G3': 8, 'G2': 43, 'G1': 30, 'A1': 2, 'A3': 41, 'A2': 12, 'A5': 47, 'A4': 10, 'A7': 35, 'A6': 24, 'E5': 18, 'C2': 20, 'E7': 23, 'E6': 14, 'C7': 1, 'C6': 46, 'E3': 7, 'C4': 42, 'C3': 29, 'E4': 21, 'C1': 38, 'F1': 37, 'F2': 33, 'F3': 26, 'F4': 44, 'F5': 28, 'F6': 15, 'F7': 31, 'E1': 27, 'B4': 32, 'B5': 5, 'B6': 22, 'C5': 45, 'B2': 25, 'B3': 13, 'D6': 11, 'D7': 17, 'D4': 40, 'D5': 4, 'D2': 39, 'D3': 19, 'D1': 34, 'B1': 48}
         self.lines = {'1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, 'A': 8, 'B': 9, 'C': 10, 'D': 11, 'E': 12, 'F': 13, 'G': 14}
+
+    def get_colour(self, colour):
+        return int(Color(colour).hue * 65000)
 
     # returns the ID of the line (1-7, A-G)
     def line_id(self, line):
@@ -32,6 +26,27 @@ class DaftPunk():
     def bulb_id(self, bulb):
         return self.lights[bulb]
 
+    def reset(self):
+        d.on(0, True, True)
+        d.brightness(0, 254, True)
+        d.color(0, 0, True)
+
+    def get(self, id):
+        if id == 0:
+            return 0, True
+
+        elif len(id) == 1:
+            group = True
+            bulb = self.line_id(id)
+        else:
+            group = False
+            try:
+                bulb = self.bulb_id(id)
+            except:
+                bulb = 100
+
+        return bulb, group
+
 
     def action(self, group=False):
         if group:
@@ -39,76 +54,99 @@ class DaftPunk():
         else:
             return 'state'
 
-    def color(self, id, color, group=False):
-        resource =  {
-                    'which':id,
-                    'data':{
-                        self.action(group):{
-                            'transitiontime': self.transitiontime,
-                            'hue': color,
-                            }
-                        }
-                    }
+    def update(self, id, data):
+        bulb, group = self.get(id)
+        resource = {
+                'which': bulb,
+                'data':{self.action(group): data}
+                }
 
-        print self.bridge.group.update(resource)
+        if group:
+            x = self.bridge.group.update(resource)
+        else:
+            x = self.bridge.light.update(resource)
+
         time.sleep(self.sleep)
+        return x
 
-    def on(self, id, on, group=False):
-        resource =  {
-                    'which':id,
-                    'data':{
-                        self.action(group): {
-                            'transitiontime': self.transitiontime,
-                            'on': on,
-                            }
-                        }
-                    }
+    def colour(self, bulb, color):
+        color = d.get_colour(color)
 
-        print self.bridge.group.update(resource)
-        time.sleep(self.sleep)
+        data = {
+            'transitiontime': self.transitiontime,
+            'hue': color,
+            'sat': 254
+        }
 
-    def brightness(self, id, bri, group=False):
-        resource =  {
-                    'which':id,
-                    'data':{
-                        self.action(group):{
-                           'transitiontime': self.transitiontime,
-                           'bri': bri
-                           }
-                        }
-                    }
+        print self.update(bulb, data)
 
-        print self.bridge.group.update(resource)
-        time.sleep(self.sleep)
+    def on(self, bulb, on):
+        data = {
+                'transitiontime': self.transitiontime,
+                'on': on,
+                'sat': 254
+                }
 
-    def wave(self, id, group=False):
-        resource =  {
-                    'which':id,
-                    'data':{
-                        self.action(group):{
-                            'transitiontime': self.transitiontime,
-                            'effect': 'colorloop'
-                            }
-                        }
-                    }
+        print self.update(bulb, data)
 
-        print self.bridge.group.update(resource)
-        time.sleep(self.sleep)
+    def brightness(self, bulb, bri):
+        data = {
+                'transitiontime': self.transitiontime,
+                'bri': bri
+                }
+
+        print self.update(bulb, data)
+
+
+    def saturation(self, bulb, sat):
+        data = {
+                'transitiontime': self.transitiontime,
+                'sat': sat
+                }
+
+        print self.update(bulb, data)
+
+
+    def wave(self, bulb):
+        data = {
+                'transitiontime': self.transitiontime,
+                'effect': 'colorloop'
+                }
+
+        print self.update(bulb, data)
 
 
 
 if __name__ == '__main__':
 
-    d = DaftPunk(Bridge(device={'ip':'10.117.108.150'}, user={'name':'newdeveloper'}))
+    d = DaftPunk(Bridge(device={'ip':'10.117.108.150'}, user={'name':'newdeveloper'}), sleep = 0.2)
 
     #d.wave(0)
     # d.on(0, True)
     # d.brightness(0, 254)
 
-    d.color(d.line_id('A'), d.colour.blue, group=True)
+    # d.colour('G7', "orange")
+    # d.colour('E', "blue")
+    # d.colour('A4', "yellow")
+    # d.blank()
 
-    d.color()
+    for i in 'ABCDEFG':
+        for j in '1234567':
+            d.colour(i+j, "blue")
+    #     # d.on(i, True)
+    #     # d.brightness(i, 254)
+    #     d.colour(i, "red")
 
+
+    # d.colour(0, "orange")
+
+    # d.reset()
+
+    # print d.colour.green
+    # print d.colour.red
+    # print d.colour.blue
+
+    # d.saturation(0, 0, True)
 
     # hue = 0
     # d.bri(0, 255)
