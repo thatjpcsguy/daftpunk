@@ -1,3 +1,4 @@
+
 import time
 import random
 from beautifulhue.api import Bridge
@@ -63,18 +64,21 @@ class DaftPunk():
                 'data':{self.action(group): data}
                 }
 
-        if group:
-            x = self.bridge.group.update(resource)
-        else:
-            x = self.bridge.light.update(resource)
-
+        try:
+            if group:
+                x = self.bridge.group.update(resource)
+            else:
+                x = self.bridge.light.update(resource)
+        except:
+            "Error updating %s!" % id
+     
         time.sleep(self.sleep)
         return x
 
     def colour(self, bulb, color):
         if type(color) == str:
             if color == "white":
-                self.saturation(0, 0)
+                self.saturation(bulb, 0)
                 return
 
             color = d.get_colour(color)
@@ -146,145 +150,42 @@ class DaftPunk():
         s = 0
         while True:
             for i in 'ABCDEFG':
-                self.colour(i, s)
-                s += 2000
-                if s > 65000:
-                    s = 0                          
+                self.colour(i, s % 65000)
+                s += 5000                  
 
     def slink_cols(self):
         s = 0
         while True:
             for i in '1234567':
-                self.colour(i, s)
-                s += 2000
-                if s > 65000:
-                    s = 0     
+                self.colour(i, s % 65000)
+                s += 5000
 
 
-    # def chessboard(self):
-    #     x = 0
-    #     for i in 'ABCDEFG':
-    #         for j in '1234567':
-    #             x += 1
+    def flash(self):
+        s = 0
+        while True:
+            self.colour(0, s % 65000)
+            s += 50000
+
+
+    def chessboard(self):
+         x = 0
+         while True:
+             for i in 'ABCDEFG':
+                 for j in '1234567':
+                     if i + j == "B7":
+                         x += 1
+                         continue
+                     if x % 2 == 0:
+                         self.colour(i+j, "blue")
+                     else:
+                         self.colour(i+j, "purple")
+                     x += 1
 
 
 
 
 if __name__ == '__main__':
+    d = DaftPunk(Bridge(device={'ip':'10.117.108.150'}, user={'name':'newdeveloper'}), sleep = .8, transitiontime=0)
 
-    d = DaftPunk(Bridge(device={'ip':'10.117.108.150'}, user={'name':'newdeveloper'}), sleep = 1, transitiontime=2)
-    # parser = argparse.ArgumentParser()
-
-    # parser.add_argument('--foo')
-
-    # args = parser.parse_args()
-
-
-    # d.siren()
-
-    # d.wave(0)
-
-    d.brightness(0, 150)
-
-    # d.on(0, True)
-    # d.saturation(0, 0)
-    # d.siren()
-
-    # d.saturation(0, 254)
-    # d.colour(0, "pink")
-
-    # d.slink_rows()
-
-
-    # d.on(0, True)
-
-    # d.colour(0, "white")
-
-    # d.colour(0, "purple")
-    # d.colour(0, "white")
-    # d.colour(0, "purple")
-
-    # d.saturation(0, 0)
-
-    # d.slink_cols()
-
-    # d.on(0, True)
-    # d.brightness(0, 254)
-    
-    # d.wave(0)
-
-
-    # d.colour('G7', "purple")
-    # d.colour('E', "blue")
-    # d.colour('A4', "yellow")
-    # d.blank()
-
-
-
-    # d.colour(0, 'blue')
-
-    # d.colour('frame4', "red")
-    # d.colour('frame3', "orange")
-    # d.colour('D4', 'purple')
-
-
-
-
-
-
-    # # frame1 = []
-    # for i in 'ABCDEFG':
-    #     for j in '1234567':
-    #         if i == 'A' or i == 'G' or j == '1' or j == '7':
-    #             continue
-    #         if i == 'B' or i == 'F' or j == '2' or j == '6':
-    #             continue
-    #         if i == 'C':
-    #             print i, j
-    #             frame1.append(str(d.lights[i+j]))
-    #         elif i == 'E':
-    #             print i, j
-    #             frame1.append(str(d.lights[i+j]))
-    #         elif j == '3':
-    #             print i, j
-    #             frame1.append(str(d.lights[i+j]))
-    #         elif j == '5':
-    #             print i, j
-    #             frame1.append(str(d.lights[i+j]))
-
-    # print frame1
-
-
-    # d.colour(0, 'blue')
-
-
-        # d.on(i, True)
-        # d.brightness(i, 254)
-        # d.colour(i, "red")
-
-
-    # d.colour(0, "orange")
-
-    # d.reset()
-
-    # print d.colour.green
-    # print d.colour.red
-    # print d.colour.blue
-
-    # d.saturation(0, 0, True)
-
-    # hue = 0
-    # d.bri(0, 255)
-    # i = 0
-    # while True:
-    #     i += 1
-    #     if i % 4 == 1:
-    #         d.color((i%14)+1, red)
-    #     elif i % 4 == 2:
-    #         d.color((i%14)+1, green)
-    #     elif i % 4 == 3:
-    #         d.color((i%14)+1, purple)
-    #     else:
-    #         d.color((i%14)+1, blue)
-
-
+    d.slink()
