@@ -220,7 +220,7 @@ class DaftPunk():
                             continue
                         # self.on(i+j, True)
                         self.colour(i+j, s, 254)
-                        s += 2000
+                        s += 1000
                         if s > 65000:
                             s = 0
 
@@ -269,9 +269,27 @@ if __name__ == '__main__':
     bridge["NW"] = Bridge(device={'ip':'10.117.109.22'}, user={'name':'newdeveloper'})
     bridge["SE"] = Bridge(device={'ip':'10.117.108.150'}, user={'name':'newdeveloper'})
 
-    d = DaftPunk(bridge, sleep = .2, transitiontime=0)
+    d = DaftPunk(bridge, sleep = .8, transitiontime=30)
 
     d.slink("SE")
+
+    # order = ['X1', 'X2', 'X3', 'Y3', 'Z3', 'Z2', 'Z1', 'Y1', 'Y2']
+    # order = ['Y2']
+
+    # while True:
+    #     random.random(0, len(order))
+
+
+
+    # while 
+
+    # d.colour("Z3", "white")
+
+    # hue = 0
+    # while True:
+    #     for l in order:
+    #         d.colour(l, hue % 65000, brightness=254)
+    #     hue += 10000
 
 
 
