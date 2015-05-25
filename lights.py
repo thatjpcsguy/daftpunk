@@ -5,6 +5,8 @@ from beautifulhue.api import Bridge
 from colour import Color
 import argparse
 
+import json
+
 class Light():
     bridge = None
     light_id = None
@@ -15,79 +17,26 @@ class Light():
 
 
 class DaftPunk():
-    bridges = None
-    lights = None
+    bridges = {}
+    lights = {}
     sleep = None
     lines = None
 
-    def __init__(self, bridges, sleep = 1, transitiontime = 0):
-        self.bridges = bridges
-        self.sleep = sleep
-        self.transitiontime = transitiontime
+    def __init__(self, config):
+        with open(config) as data_file:    
+            config = json.load(data_file)
 
-        self.lights = {
-                        'E2': Light(bridges['SE'], 16), 
-                        'G7': Light(bridges['SE'], 9), 
-                        'G6': Light(bridges['SE'], 6), 
-                        'G5': Light(bridges['SE'], 3), 
-                        'G4': Light(bridges['SE'], 36), 
-                        'G3': Light(bridges['SE'], 8), 
-                        'G2': Light(bridges['SE'], 43), 
-                        'G1': Light(bridges['SE'], 30), 
-                        'A1': Light(bridges['SE'], 2), 
-                        'A3': Light(bridges['SE'], 41), 
-                        'A2': Light(bridges['SE'], 12), 
-                        'A5': Light(bridges['SE'], 47), 
-                        'A4': Light(bridges['SE'], 10), 
-                        'A7': Light(bridges['SE'], 35), 
-                        'A6': Light(bridges['SE'], 24), 
-                        'E5': Light(bridges['SE'], 18), 
-                        'C2': Light(bridges['SE'], 20), 
-                        'E7': Light(bridges['SE'], 23), 
-                        'E6': Light(bridges['SE'], 14), 
-                        'C7': Light(bridges['SE'], 1), 
-                        'C6': Light(bridges['SE'], 46), 
-                        'E3': Light(bridges['SE'], 7), 
-                        'C4': Light(bridges['SE'], 42), 
-                        'C3': Light(bridges['SE'], 29), 
-                        'E4': Light(bridges['SE'], 21), 
-                        'C1': Light(bridges['SE'], 38), 
-                        'F1': Light(bridges['SE'], 37), 
-                        'F2': Light(bridges['SE'], 33), 
-                        'F3': Light(bridges['SE'], 26), 
-                        'F4': Light(bridges['SE'], 44), 
-                        'F5': Light(bridges['SE'], 28), 
-                        'F6': Light(bridges['SE'], 15), 
-                        'F7': Light(bridges['SE'], 31), 
-                        'E1': Light(bridges['SE'], 27), 
-                        'B4': Light(bridges['SE'], 32), 
-                        'B5': Light(bridges['SE'], 5), 
-                        'B6': Light(bridges['SE'], 22), 
-                        'C5': Light(bridges['SE'], 45), 
-                        'B2': Light(bridges['SE'], 25), 
-                        'B3': Light(bridges['SE'], 13), 
-                        'D6': Light(bridges['SE'], 11), 
-                        'D7': Light(bridges['SE'], 17), 
-                        'D4': Light(bridges['SE'], 40), 
-                        'D5': Light(bridges['SE'], 4), 
-                        'D2': Light(bridges['SE'], 39), 
-                        'D3': Light(bridges['SE'], 19), 
-                        'D1': Light(bridges['SE'], 34), 
-                        'B1': Light(bridges['SE'], 48),
+        #read the config and set the various parts
+        self.sleep = config["sleep"]
+        self.transitiontime = config["transitiontime"]
 
-                        'X1': Light(bridges['NW'], 11),
-                        'X2': Light(bridges['NW'], 12),
-                        'X3': Light(bridges['NW'], 15),
-                        'Y1': Light(bridges['NW'], 16),
-                        'Y2': Light(bridges['NW'], 18),
-                        'Y3': Light(bridges['NW'], 19),
-                        'Z1': Light(bridges['NW'], 13),
-                        'Z2': Light(bridges['NW'], 14),
-                        'Z3': Light(bridges['NW'], 17)
+        for i in config["bridges"]:
+            self.bridges[i] = Bridge(device={'ip':config["bridges"][i]["ip"]}, user={'name':config["bridges"][i]["user"]})
 
-                    }
+        for i in config["lights"]:
+            self.lights[i] = Light(self.bridges[config["lights"][i]["bridge"]], config["lights"][i]["id"])
 
-        self.lines = {'1': 1, '2': 2, '3': 3, '4': 4, '5': 5, '6': 6, '7': 7, 'A': 8, 'B': 9, 'C': 10, 'D': 11, 'E': 12, 'F': 13, 'G': 14, 'frame4': 15, 'frame3': 16}
+        self.lines = {"1": 1, "2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7, "A": 8, "B": 9, "C": 10, "D": 11, "E": 12, "F": 13, "G": 14, "frame4": 15, "frame3": 16}
 
     def get_colour(self, colour):
         return int(Color(colour).hue * 65000)
@@ -124,15 +73,15 @@ class DaftPunk():
 
     def action(self, group=False):
         if group:
-            return 'action'
+            return "action"
         else:
-            return 'state'
+            return "state"
 
     def update(self, id, data):
         bulb, group = self.get(id)
         resource = {
-                'which': bulb.light_id,
-                'data':{self.action(group): data}
+                "which": bulb.light_id,
+                "data":{self.action(group): data}
                 }
 
         try:
@@ -155,33 +104,33 @@ class DaftPunk():
             color = d.get_colour(color)
 
         data = {
-            'transitiontime': self.transitiontime,
-            'hue': color,
-            'sat': 254
+            "transitiontime": self.transitiontime,
+            "hue": color,
+            "sat": 254
         }
 
         if brightness:
-            data['bri'] = brightness
+            data["bri"] = brightness
 
         if on:
-            data['on'] = on
+            data["on"] = on
 
         print self.update(bulb, data)
 
     def on(self, bulb, on):
         data = {
-                'transitiontime': self.transitiontime,
-                'on': on,
-                'sat': 254,
-                'bri': 254
+                "transitiontime": self.transitiontime,
+                "on": on,
+                "sat": 254,
+                "bri": 254
                 }
 
         print self.update(bulb, data)
 
     def brightness(self, bulb, bri):
         data = {
-                'transitiontime': self.transitiontime,
-                'bri': bri
+                "transitiontime": self.transitiontime,
+                "bri": bri
                 }
 
         print self.update(bulb, data)
@@ -189,8 +138,8 @@ class DaftPunk():
 
     def saturation(self, bulb, sat):
         data = {
-                'transitiontime': self.transitiontime,
-                'sat': sat
+                "transitiontime": self.transitiontime,
+                "sat": sat
                 }
 
         print self.update(bulb, data)
@@ -198,8 +147,8 @@ class DaftPunk():
 
     def wave(self, bulb):
         data = {
-                'transitiontime': self.transitiontime,
-                'effect': 'colorloop'
+                "transitiontime": self.transitiontime,
+                "effect": "colorloop"
                 }
 
         print self.update(bulb, data)
@@ -207,16 +156,16 @@ class DaftPunk():
 
     def siren(self):
         while True:
-            self.colour(0, 'red')
-            self.colour(0, 'blue')
+            self.colour(0, "red")
+            self.colour(0, "blue")
 
 
     def slink(self, region="SE"):
         s = 0
         while True:
-            for i in 'ABCDEFG' if region == "SE" else 'XYZ':
-                    for j in '1234567' if region == "SE" else '123':
-                        if i == 'B' and j == '7':
+            for i in "ABCDEFG" if region == "SE" else "XYZ":
+                    for j in "1234567" if region == "SE" else "123":
+                        if i == "B" and j == "7":
                             continue
                         # self.on(i+j, True)
                         self.colour(i+j, s, 254)
@@ -227,14 +176,14 @@ class DaftPunk():
     def slink_rows(self):
         s = 0
         while True:
-            for i in 'ABCDEFG':
+            for i in "ABCDEFG":
                 self.colour(i, s % 65000)
                 s += 5000                  
 
     def slink_cols(self):
         s = 0
         while True:
-            for i in '1234567':
+            for i in "1234567":
                 self.colour(i, s % 65000)
                 s += 5000
 
@@ -249,8 +198,8 @@ class DaftPunk():
     def chessboard(self):
          x = 0
          while True:
-             for i in 'ABCDEFG':
-                 for j in '1234567':
+             for i in "ABCDEFG":
+                 for j in "1234567":
                      if i + j == "B7":
                          x += 1
                          continue
@@ -264,35 +213,8 @@ class DaftPunk():
 
 
 
-if __name__ == '__main__':
-    bridge = {}
-    bridge["NW"] = Bridge(device={'ip':'10.117.109.22'}, user={'name':'newdeveloper'})
-    bridge["SE"] = Bridge(device={'ip':'10.117.108.150'}, user={'name':'newdeveloper'})
 
-    d = DaftPunk(bridge, sleep = .8, transitiontime=30)
-
-    d.slink("SE")
-
-    # order = ['X1', 'X2', 'X3', 'Y3', 'Z3', 'Z2', 'Z1', 'Y1', 'Y2']
-    # order = ['Y2']
-
-    # while True:
-    #     random.random(0, len(order))
-
-
-
-    # while 
-
-    # d.colour("Z3", "white")
-
-    # hue = 0
-    # while True:
-    #     for l in order:
-    #         d.colour(l, hue % 65000, brightness=254)
-    #     hue += 10000
-
-
-
-
-
+if __name__ == "__main__":
+    d = DaftPunk("sydney.json")
+    d.colour("X1", "blue")
 
