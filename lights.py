@@ -95,7 +95,7 @@ class DaftPunk():
         time.sleep(self.sleep)
         return x
 
-    def colour(self, bulb, color, brightness=False, on=True):
+    def colour(self, bulb, color, brightness=False, on=True, transitiontime=None):
         if type(color) == str:
             if color == "white":
                 self.saturation(bulb, 0)
@@ -104,7 +104,7 @@ class DaftPunk():
             color = d.get_colour(color)
 
         data = {
-            "transitiontime": self.transitiontime,
+            "transitiontime": self.transitiontime if not transitiontime else transitiontime,
             "hue": color,
             "sat": 254
         }
@@ -145,10 +145,10 @@ class DaftPunk():
         print self.update(bulb, data)
 
 
-    def wave(self, bulb):
+    def wave(self, bulb, off=False):
         data = {
                 "transitiontime": self.transitiontime,
-                "effect": "colorloop"
+                "effect": "colorloop" if not off else "none"
                 }
 
         print self.update(bulb, data)
@@ -216,5 +216,4 @@ class DaftPunk():
 
 if __name__ == "__main__":
     d = DaftPunk("sydney.json")
-    d.colour("X1", "blue")
 
