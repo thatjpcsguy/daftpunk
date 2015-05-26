@@ -101,7 +101,7 @@ class DaftPunk():
                 self.saturation(bulb, 0)
                 return
 
-            color = d.get_colour(color)
+            color = self.get_colour(color)
 
         data = {
             "transitiontime": self.transitiontime if not transitiontime else transitiontime,
@@ -115,7 +115,7 @@ class DaftPunk():
         if on:
             data["on"] = on
 
-        print self.update(bulb, data)
+        return self.update(bulb, data)
 
     def on(self, bulb, on):
         data = {
@@ -125,7 +125,7 @@ class DaftPunk():
                 "bri": 254
                 }
 
-        print self.update(bulb, data)
+        return self.update(bulb, data)
 
     def brightness(self, bulb, bri):
         data = {
@@ -133,7 +133,7 @@ class DaftPunk():
                 "bri": bri
                 }
 
-        print self.update(bulb, data)
+        return self.update(bulb, data)
 
 
     def saturation(self, bulb, sat):
@@ -142,7 +142,7 @@ class DaftPunk():
                 "sat": sat
                 }
 
-        print self.update(bulb, data)
+        return self.update(bulb, data)
 
 
     def wave(self, bulb, off=False):
@@ -151,7 +151,7 @@ class DaftPunk():
                 "effect": "colorloop" if not off else "none"
                 }
 
-        print self.update(bulb, data)
+        return self.update(bulb, data)
 
 
     def siren(self):
