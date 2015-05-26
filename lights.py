@@ -98,8 +98,7 @@ class DaftPunk():
     def colour(self, bulb, color, brightness=False, on=True, transitiontime=None):
         if type(color) == str:
             if color == "white":
-                self.saturation(bulb, 0)
-                return
+                return self.saturation(bulb, 0)
 
             color = self.get_colour(color)
 
