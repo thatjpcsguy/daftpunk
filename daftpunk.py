@@ -30,7 +30,12 @@ class DaftPunk():
         for i in config["lights"]:
             self.lights[i] = Light(self.bridges[config["lights"][i]["bridge"]], config["lights"][i]["id"])
 
-        self.groups = {"roof": Group([self.lights["roof1"], self.lights["roof2"]]), "room": Group([self.lights["roof1"], self.lights["roof2"], self.lights["lamp1"]])}
+        for i in config["groups"]:
+            lights = []
+            for j in config["groups"][i]:
+                lights.append(self.lights[j])
+
+            self.groups[i] = Group(i, lights)
 
     def get_colour(self, colour):
         return int(Color(colour).hue * 65000)
@@ -48,21 +53,10 @@ class DaftPunk():
         self.color(0, 0, True)
 
     def get(self, id):
-        if id == 0:
-            return 0, True
-
-        elif id in self.lights.keys():
-            group = False
-            try:
-                bulb = self.bulb_id(id)
-            except:
-                bulb = None
-
+        if id in self.lights.keys():
+            return self.lights[id]
         elif id in self.groups.keys():
-            group = True
-            bulb = self.line_id(id)
-
-        return bulb, group
+            return self.groups[id]
 
     def action(self, group=False):
         if group:
@@ -71,17 +65,8 @@ class DaftPunk():
             return "state"
 
     def update(self, id, data):
-        bulb, group = self.get(id)
-        resource = data
-
-        try:
-            if group:
-                x = self.bridge.group.update(resource)
-            else:
-                x = bulb.update(resource)
-        except:
-            "Error updating %s!" % id
-
+        bulb = self.get(id)
+        x = bulb.update(data)
         time.sleep(self.sleep)
         return x
 
@@ -196,5 +181,4 @@ class DaftPunk():
 if __name__ == '__main__':
     d = DaftPunk("config/jpcs.json")
 
-    print d.colour("roof2", "blue")
-
+    print d.colour("roof", "red")

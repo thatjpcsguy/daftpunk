@@ -8,6 +8,8 @@
         "lamp1": {"bridge": "bedroom", "id": 2}
     },
     "groups": {
+        "roof": ["roof1", "roof2"],
+        "room": ["lamp1", "roof1", "roof2"]
     },
     "sleep": 0.5,
     "transitiontime": 1
