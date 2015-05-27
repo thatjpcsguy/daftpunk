@@ -116,7 +116,8 @@ class DaftPunk():
     def wave(self, bulb, off=False):
         data = {
             "transitiontime": self.transitiontime,
-            "effect": "colorloop" if not off else "none"
+            "effect": "colorloop" if not off else "none",
+            "sat": 254
         }
 
         return self.update(bulb, data)
