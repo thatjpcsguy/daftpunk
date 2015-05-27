@@ -1,13 +1,10 @@
+from daftpunk import DaftPunk
+from argparse import ArgumentParser
 
-from lights import DaftPunk
-import time
-import random
-
-import argparse
 
 class Interpreter():
     def __init__(self, config):
-        self.d = DaftPunk(config)
+        self.d = config
 
     def parse_line(self, line=""):
         line = line.split(' ')
@@ -25,12 +22,14 @@ class Interpreter():
             return self.d.wave(line[1], True if line[2] == "True" else False)
 
 
-
 if __name__ == "__main__":
-    i = Interpreter("config/jpcs.json")
+    parser = ArgumentParser()
+    parser.add_argument("-c", "--config", dest="config_file", help="which config file to use")
+    args = parser.parse_args()
+
+    i = Interpreter(DaftPunk(args.config_file))
 
     d = raw_input("Command: ")
     while d:
         print i.parse_line(d)
         d = raw_input("Command: ")
-

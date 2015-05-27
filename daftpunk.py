@@ -1,29 +1,24 @@
 
 import time
-import random
+
 from beautifulhue.api import Bridge
+from light import Light
+from group import Group
 from colour import Color
+
 import argparse
 
 import json
-
-class Light():
-    bridge = None
-    light_id = None
-
-    def __init__(self, bridge, light_id):
-        self.bridge = bridge
-        self.light_id =light_id
 
 
 class DaftPunk():
     bridges = {}
     lights = {}
     sleep = None
-    lines = None
+    groups = {}
 
     def __init__(self, config):
-        with open(config) as data_file:    
+        with open(config) as data_file:
             config = json.load(data_file)
 
         #read the config and set the various parts
@@ -31,19 +26,19 @@ class DaftPunk():
         self.transitiontime = config["transitiontime"]
 
         for i in config["bridges"]:
-            self.bridges[i] = Bridge(device={'ip':config["bridges"][i]["ip"]}, user={'name':config["bridges"][i]["user"]})
+            self.bridges[i] = Bridge(device={'ip': config["bridges"][i]["ip"]}, user={'name': config["bridges"][i]["user"]})
 
         for i in config["lights"]:
             self.lights[i] = Light(self.bridges[config["lights"][i]["bridge"]], config["lights"][i]["id"])
 
-        self.lines = {"1": 1, "2": 2, "3": 3, "4": 4, "5": 5, "6": 6, "7": 7, "A": 8, "B": 9, "C": 10, "D": 11, "E": 12, "F": 13, "G": 14, "frame4": 15, "frame3": 16}
+        self.groups = {"roof": Group([self.lights["roof1"], self.lights["roof2"]]), "room": Group([self.lights["roof1"], self.lights["roof2"], self.lights["lamp1"]])}
 
     def get_colour(self, colour):
         return int(Color(colour).hue * 65000)
 
     # returns the ID of the line (1-7, A-G)
-    def line_id(self, line):
-        return self.lines[line]
+    def group_id(self, line):
+        return self.groups[line]
 
     def bulb_id(self, bulb):
         return self.lights[bulb]
@@ -64,12 +59,11 @@ class DaftPunk():
             except:
                 bulb = None
 
-        elif id in self.lines.keys():
+        elif id in self.groups.keys():
             group = True
             bulb = self.line_id(id)
 
         return bulb, group
-
 
     def action(self, group=False):
         if group:
@@ -80,9 +74,9 @@ class DaftPunk():
     def update(self, id, data):
         bulb, group = self.get(id)
         resource = {
-                "which": bulb.light_id,
-                "data":{self.action(group): data}
-                }
+            "which": bulb.light_id,
+            "data": {self.action(group): data}
+        }
 
         try:
             if group:
@@ -91,7 +85,7 @@ class DaftPunk():
                 x = bulb.bridge.light.update(resource)
         except:
             "Error updating %s!" % id
-     
+
         time.sleep(self.sleep)
         return x
 
@@ -118,46 +112,42 @@ class DaftPunk():
 
     def on(self, bulb, on):
         data = {
-                "transitiontime": self.transitiontime,
-                "on": on,
-                "sat": 254,
-                "bri": 254
-                }
+            "transitiontime": self.transitiontime,
+            "on": on,
+            "sat": 254,
+            "bri": 254
+        }
 
         return self.update(bulb, data)
 
     def brightness(self, bulb, bri):
         data = {
-                "transitiontime": self.transitiontime,
-                "bri": bri
-                }
+            "transitiontime": self.transitiontime,
+            "bri": bri
+        }
 
         return self.update(bulb, data)
-
 
     def saturation(self, bulb, sat):
         data = {
-                "transitiontime": self.transitiontime,
-                "sat": sat
-                }
+            "transitiontime": self.transitiontime,
+            "sat": sat
+        }
 
         return self.update(bulb, data)
-
 
     def wave(self, bulb, off=False):
         data = {
-                "transitiontime": self.transitiontime,
-                "effect": "colorloop" if not off else "none"
-                }
+            "transitiontime": self.transitiontime,
+            "effect": "colorloop" if not off else "none"
+        }
 
         return self.update(bulb, data)
-
 
     def siren(self):
         while True:
             self.colour(0, "red")
             self.colour(0, "blue")
-
 
     def slink(self, region="SE"):
         s = 0
@@ -177,7 +167,7 @@ class DaftPunk():
         while True:
             for i in "ABCDEFG":
                 self.colour(i, s % 65000)
-                s += 5000                  
+                s += 5000
 
     def slink_cols(self):
         s = 0
@@ -186,33 +176,23 @@ class DaftPunk():
                 self.colour(i, s % 65000)
                 s += 5000
 
-
     def flash(self):
         s = 0
         while True:
             self.colour(0, s % 65000)
             s += 50000
 
-
     def chessboard(self):
-         x = 0
-         while True:
-             for i in "ABCDEFG":
-                 for j in "1234567":
-                     if i + j == "B7":
-                         x += 1
-                         continue
-                     if x % 2 == 0:
+        x = 0
+        while True:
+            for i in "ABCDEFG":
+                for j in "1234567":
+                    if i + j == "B7":
+                        x += 1
+                        continue
+                    if x % 2 == 0:
 
-                         self.colour(i+j, "blue")
-                     else:
-                         self.colour(i+j, "purple")
-                     x += 1
-
-
-
-
-
-if __name__ == "__main__":
-    d = DaftPunk("sydney.json")
-
+                        self.colour(i+j, "blue")
+                    else:
+                        self.colour(i+j, "purple")
+                    x += 1
