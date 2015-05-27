@@ -1,10 +1,11 @@
-from lights import DaftPunk
+from daftpunk import DaftPunk
+from interpreter import Interpreter
 from flask import Flask, jsonify, request
-
 from argparse import ArgumentParser
 
 app = Flask(__name__)
 parser = ArgumentParser()
+
 
 @app.route('/')
 def hello_world():
@@ -14,11 +15,9 @@ def hello_world():
 @app.route('/<command>')
 def command(command):
     if command == "colour":
-        res = app.d.colour(request.args.get('light'), str(request.args.get('colour')))
-    # elif command == "on":
-    #     res = app.d.on(request.args.get('light'), bool(request.args.get('on')))
+        res = command + " " + request.args.get('light') + " " + request.args.get('colour')
 
-    return jsonify(res)
+    return jsonify(app.i.parse_line(str(res)))
 
 
 if __name__ == '__main__':
@@ -26,5 +25,6 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     app.d = DaftPunk(args.config_file)
+    app.i = Interpreter(app.d)
 
     app.run(host="0.0.0.0", debug=True)
