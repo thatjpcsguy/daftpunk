@@ -36,7 +36,7 @@ class Group():
             if 'error' in ro:
                 path = '{prefix}/groups'.format(prefix=i.prefix)
                 r = requests.post(path, json.dumps(data))
-                ro = json.loads(r.text)
+                ro = json.loads(r.text)[0]
                 res.append((r.status_code, ro))
                 group_id = int(ro['success']['id'])
             else:
