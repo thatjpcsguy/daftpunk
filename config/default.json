@@ -13,5 +13,5 @@
         "lamp": ["lamp1"]
     },
     "sleep": 0.5,
-    "transitiontime": 1
+    "transitiontime": 20
 }
