@@ -5,8 +5,7 @@ from beautifulhue.api import Bridge
 from light import Light
 from group import Group
 from colour import Color
-
-import argparse
+from bridge import Bridge
 
 import json
 
@@ -26,7 +25,7 @@ class DaftPunk():
         self.transitiontime = config["transitiontime"]
 
         for i in config["bridges"]:
-            self.bridges[i] = Bridge(device={'ip': config["bridges"][i]["ip"]}, user={'name': config["bridges"][i]["user"]})
+            self.bridges[i] = Bridge(config["bridges"][i]["ip"], config["bridges"][i]["user"])
 
         for i in config["lights"]:
             self.lights[i] = Light(self.bridges[config["lights"][i]["bridge"]], config["lights"][i]["id"])
@@ -44,9 +43,9 @@ class DaftPunk():
         return self.lights[bulb]
 
     def reset(self):
-        d.on(0, True, True)
-        d.brightness(0, 254, True)
-        d.color(0, 0, True)
+        self.on(0, True, True)
+        self.brightness(0, 254, True)
+        self.color(0, 0, True)
 
     def get(self, id):
         if id == 0:
@@ -73,16 +72,13 @@ class DaftPunk():
 
     def update(self, id, data):
         bulb, group = self.get(id)
-        resource = {
-            "which": bulb.light_id,
-            "data": {self.action(group): data}
-        }
+        resource = data
 
         try:
             if group:
                 x = self.bridge.group.update(resource)
             else:
-                x = bulb.bridge.light.update(resource)
+                x = bulb.update(resource)
         except:
             "Error updating %s!" % id
 
@@ -196,3 +192,9 @@ class DaftPunk():
                     else:
                         self.colour(i+j, "purple")
                     x += 1
+
+if __name__ == '__main__':
+    d = DaftPunk("config/jpcs.json")
+
+    print d.colour("roof2", "blue")
+
