@@ -39,10 +39,10 @@
       pip install beautifulhue
       pip install colour
 
-- Now run `python lights.py config/default.conf` or similar and you're away!
+- Now run `python api.py --config config/default.conf`
 - Try it out
 
-      ➜  ~  curl http://127.0.0.1:5000/colour/roof1/blue
+      ➜  ~  curl http://127.0.0.1:5000/colour?light=roof1&colour=blue
 
 Yay!
 
