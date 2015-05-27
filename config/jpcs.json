@@ -9,7 +9,8 @@
     },
     "groups": {
         "roof": ["roof1", "roof2"],
-        "room": ["lamp1", "roof1", "roof2"]
+        "room": ["lamp1", "roof1", "roof2"],
+        "lamp": ["lamp1"]
     },
     "sleep": 0.5,
     "transitiontime": 1

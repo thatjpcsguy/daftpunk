@@ -16,10 +16,6 @@ class Bridge():
         res = requests.get(self.prefix)
         return res.status_code, json.loads(res.text)
 
-    def get_group(self, name):
-        return 0
-
-
 if __name__ == '__main__':
     b = Bridge("10.0.1.50", "newdeveloper")
 

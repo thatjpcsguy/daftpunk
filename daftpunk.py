@@ -30,12 +30,14 @@ class DaftPunk():
         for i in config["lights"]:
             self.lights[i] = Light(self.bridges[config["lights"][i]["bridge"]], config["lights"][i]["id"])
 
+        x = 1
         for i in config["groups"]:
             lights = []
             for j in config["groups"][i]:
                 lights.append(self.lights[j])
 
-            self.groups[i] = Group(i, lights)
+            self.groups[i] = Group(i, lights, x if x <= 16 else None)
+            x += 1
 
     def get_colour(self, colour):
         return int(Color(colour).hue * 65000)
@@ -57,12 +59,6 @@ class DaftPunk():
             return self.lights[id]
         elif id in self.groups.keys():
             return self.groups[id]
-
-    def action(self, group=False):
-        if group:
-            return "action"
-        else:
-            return "state"
 
     def update(self, id, data):
         bulb = self.get(id)

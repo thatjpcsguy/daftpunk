@@ -15,5 +15,6 @@ class Light():
 
         print path
         print json.dumps(data)
-        res = requests.put(path, json.dumps(data))
-        return res.status_code, json.loads(res.text)
+        r = requests.put(path, json.dumps(data))
+        res = [(r.status_code, json.loads(r.text))]
+        return res
