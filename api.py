@@ -24,7 +24,6 @@ if __name__ == '__main__':
     parser.add_argument("-c", "--config", dest="config_file", help="which config file to use")
     args = parser.parse_args()
 
-    app.d = DaftPunk(args.config_file)
-    app.i = Interpreter(app.d)
+    app.i = Interpreter(DaftPunk(args.config_file))
 
     app.run(host="0.0.0.0", debug=True)
