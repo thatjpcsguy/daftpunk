@@ -1,7 +1,6 @@
 
 import time
 
-from beautifulhue.api import Bridge
 from light import Light
 from group import Group
 from colour import Color

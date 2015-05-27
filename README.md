@@ -36,7 +36,7 @@
 
 - First install the dependencies
 
-      pip install beautifulhue
+      pip install requests
       pip install colour
 
 - Now run `python api.py --config config/default.conf`

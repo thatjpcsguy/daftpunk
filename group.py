@@ -11,7 +11,7 @@ class Group():
         self.name = name
         self.group_id = group_id
         self.lights = lights
-        print self.create()
+        self.create()
 
     def create(self, group_id=None):
         if group_id:
