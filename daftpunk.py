@@ -36,6 +36,7 @@ class DaftPunk():
                 lights.append(self.lights[j])
 
             self.groups[i] = Group(i, lights, x if x <= 16 else None)
+            time.sleep(self.sleep)
             x += 1
 
     def get_colour(self, colour):
@@ -175,6 +176,15 @@ class DaftPunk():
                     x += 1
 
 if __name__ == '__main__':
-    d = DaftPunk("config/jpcs.json")
+    d = DaftPunk("config/sydney.json")
+    d.colour("studio", "white")
+    d.brightness("studio", 10)
+    d.brightness("row1", 254)
+    d.brightness("row2", 254)
 
-    print d.colour("roof", "red")
+    while True:
+        for i in ["group1", "group2", "group3", "group4", "group5", "group6", "group7"]:
+            d.colour(i, "red")
+        for i in ["group1", "group2", "group3", "group4", "group5", "group6", "group7"]:
+            d.colour(i, "yellow")
+
