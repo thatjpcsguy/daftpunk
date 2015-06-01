@@ -1,6 +1,6 @@
 from daftpunk import DaftPunk
 from interpreter import Interpreter
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, render_template
 from argparse import ArgumentParser
 
 app = Flask(__name__)
@@ -9,15 +9,33 @@ parser = ArgumentParser()
 
 @app.route('/')
 def hello_world():
-    return 'Welcome to Daft Punk!'
+    return render_template('index.html')
 
 
-@app.route('/<command>')
-def command(command):
-    if command == "colour":
-        res = command + " " + request.args.get('light') + " " + request.args.get('colour')
-
+@app.route('/colour')
+def colour():
+    res = "colour " + request.args.get('light') + " " + request.args.get('colour')
     return jsonify(app.i.parse_line(str(res)))
+
+
+@app.route('/on')
+def on():
+    res = "on " + request.args.get('light') + " " + request.args.get('on')
+    return jsonify(app.i.parse_line(str(res)))
+
+
+@app.route('/get-name')
+def get_name():
+    return jsonify(data=app.i.d.name)
+
+
+@app.route('/list-lights')
+def list_lights():
+    data = []
+    for light in app.i.d.lights:
+        data.append({"name": light, "x": app.i.d.lights[light].x_coord, "y": app.i.d.lights[light].y_coord})
+
+    return jsonify(data=data)
 
 
 if __name__ == '__main__':

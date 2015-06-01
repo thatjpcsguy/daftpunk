@@ -14,11 +14,13 @@ class DaftPunk():
     lights = {}
     sleep = None
     groups = {}
+    name = None
 
     def __init__(self, config):
         with open(config) as data_file:
             config = json.load(data_file)
 
+        self.name = config["name"]
         #read the config and set the various parts
         self.sleep = config["sleep"]
         self.transitiontime = config["transitiontime"]
@@ -27,16 +29,19 @@ class DaftPunk():
             self.bridges[i] = Bridge(config["bridges"][i]["ip"], config["bridges"][i]["user"])
 
         for i in config["lights"]:
-            self.lights[i] = Light(self.bridges[config["lights"][i]["bridge"]], config["lights"][i]["id"])
+            try:
+                self.lights[i] = Light(self.bridges[config["lights"][i]["bridge"]], config["lights"][i]["id"], config["lights"][i]["x"], config["lights"][i]["y"])
+            except:
+                self.lights[i] = Light(self.bridges[config["lights"][i]["bridge"]], config["lights"][i]["id"])
 
-        x = 1
-        for i in config["groups"]:
-            lights = []
-            for j in config["groups"][i]:
-                lights.append(self.lights[j])
+        # x = 1
+        # for i in config["groups"]:
+        #     lights = []
+        #     for j in config["groups"][i]:
+        #         lights.append(self.lights[j])
 
-            self.groups[i] = Group(i, lights, x if x <= 16 else None)
-            x += 1
+        #     self.groups[i] = Group(i, lights, x if x <= 16 else None)
+        #     x += 1
 
     def get_colour(self, colour):
         return int(Color(colour).hue * 65000)
@@ -115,7 +120,7 @@ class DaftPunk():
     def wave(self, bulb, off=False):
         data = {
             "transitiontime": self.transitiontime,
-            "effect": "colorloop" if not off else "none",
+            "effect": "colorloop" if off else "none",
             "sat": 254
         }
 
@@ -175,6 +180,7 @@ class DaftPunk():
                     x += 1
 
 if __name__ == '__main__':
-    d = DaftPunk("config/jpcs.json")
+    d = DaftPunk("config/default.json")
 
-    print d.colour("roof", "red")
+    # d.colour("room", "purple")
+    d.wave("room", True)
