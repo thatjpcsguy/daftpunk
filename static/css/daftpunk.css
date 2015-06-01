@@ -1,0 +1,31 @@
+h1, h2 {
+	font-family: 'Lato', sans-serif;
+	font-weight: 900;
+}
+
+.space {
+	width: 1070px;
+	position: relative;
+	top: 10px;
+	left: 50%;
+	margin-left: -535;
+	border: 2px solid black;
+	height: 1070;
+}
+
+.light {
+	position: absolute;
+	width: 20px;
+	height: 20px;
+	border: 1px solid black;
+	border-radius: 10px;
+}
+
+.options {
+	border: 3px solid black;
+	background-color: #666666;
+	width: 200px;
+	display: none;
+	padding: 30px;
+	color: white;
+}
