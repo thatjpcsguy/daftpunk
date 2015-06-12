@@ -34,17 +34,13 @@ class DaftPunk():
             except:
                 self.lights[i] = Light(self.bridges[config["lights"][i]["bridge"]], config["lights"][i]["id"])
 
-        # x = 1
-        # for i in config["groups"]:
-        #     lights = []
-        #     for j in config["groups"][i]:
-        #         lights.append(self.lights[j])
-
-        #     self.groups[i] = Group(i, lights, x if x <= 16 else None)
-        #     x += 1
-
-    def get_colour(self, colour):
-        return int(Color(colour).hue * 65000)
+        x = 1
+        for i in config["groups"]:
+            lights = []
+            for j in config["groups"][i]:
+                lights.append(self.lights[j])
+            self.groups[i] = Group(i, lights, x if x <= 16 else None)
+            x += 1
 
     # returns the ID of the line (1-7, A-G)
     def group_id(self, line):
@@ -75,16 +71,13 @@ class DaftPunk():
             if color == "white":
                 return self.saturation(bulb, 0)
 
-            color = self.get_colour(color)
+            h, s, l = Color(color).get_hsl()
 
         data = {
             "transitiontime": self.transitiontime if not transitiontime else transitiontime,
-            "hue": color,
-            "sat": 254
+            "hue": int(h*65000),
+            "sat": int(s*254)
         }
-
-        if brightness:
-            data["bri"] = brightness
 
         if on:
             data["on"] = on
