@@ -71,7 +71,9 @@
         "Z3": {"bridge": "NW", "id": 17, "x": 50, "y": 50},
 
         "richard": {"bridge": "NW", "id": 20, "x": 450, "y": 100},
-        "richard-lamp": {"bridge": "NW", "id": 21, "x": 450, "y": 100}
+        "richard-lamp": {"bridge": "NW", "id": 21, "x": 460, "y": 100},
+
+        "jpcs": {"bridge": "NW", "id": 22, "x": 470, "y": 100}
     },
     "groups": {
         "1": ["A1", "B1", "C1", "D1", "E1", "F1", "G1"],
