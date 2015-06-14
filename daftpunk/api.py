@@ -42,6 +42,10 @@ def main():
     parser.add_argument("-c", "--config", dest="config_file", help="which config file to use")
     args = parser.parse_args()
 
+    if not args.config_file:
+        print "Please supply a config file with --config. An example config file can be found here: https://github.com/thatjpcsguy/daftpunk/blob/master/daftpunk/config/default.json"
+        return
+
     app.i = Interpreter(DaftPunk(args.config_file))
 
     app.run(host="0.0.0.0", debug=True)
