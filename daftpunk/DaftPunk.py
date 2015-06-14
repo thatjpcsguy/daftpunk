@@ -1,10 +1,10 @@
 
 import time
 
-from light import Light
-from group import Group
-from colour import Color
-from bridge import Bridge
+import Light
+import Group
+import Color
+import Bridge
 
 import json
 

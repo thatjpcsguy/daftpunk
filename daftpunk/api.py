@@ -1,5 +1,5 @@
-from daftpunk import DaftPunk
-from interpreter import Interpreter
+import DaftPunk
+import Interpreter
 from flask import Flask, jsonify, request, render_template
 from argparse import ArgumentParser
 
