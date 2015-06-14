@@ -1,12 +1,12 @@
 
+import json
 import time
 
-import Light
-import Group
-import Color
-import Bridge
+from colour import Color
 
-import json
+from daftpunk.Light import Light
+from daftpunk.Group import Group
+from daftpunk.Bridge import Bridge
 
 
 class DaftPunk():
