@@ -4,7 +4,9 @@ from setuptools import setup, find_packages
 
 requirements = [
     'requests',
-    'colour'
+    'colour',
+    'flask',
+    'argparse'
 ]
 
 setup(
@@ -16,8 +18,8 @@ setup(
     url='https://github.com/thatjpcsguy/daftpunk',
     entry_points={
         'console_scripts': [
-            'daftpunk-api = api.main:main',
-            'daftpunk = interpreter.main:main',
+            'daftpunk-api = daftpunk.api:main',
+            'daftpunk = daftpunk.interpreter:main',
         ]
     },
     requirements=requirements,

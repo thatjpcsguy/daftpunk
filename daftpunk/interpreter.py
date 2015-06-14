@@ -1,4 +1,4 @@
-from daftpunk import DaftPunk
+from daftpunk.DaftPunk import DaftPunk
 from argparse import ArgumentParser
 
 
@@ -22,7 +22,7 @@ class Interpreter():
             return self.d.wave(line[1], True if line[2] == "True" else False)
 
 
-if __name__ == "__main__":
+def main():
     parser = ArgumentParser()
     parser.add_argument("-c", "--config", dest="config_file", help="which config file to use")
     args = parser.parse_args()
@@ -33,3 +33,7 @@ if __name__ == "__main__":
     while d:
         print i.parse_line(d)
         d = raw_input("Command: ")
+
+
+if __name__ == "__main__":
+    main()

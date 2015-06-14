@@ -1,7 +1,7 @@
 {
     "name": "Default Setup",
     "bridges": {
-          "bedroom": {"ip": "10.0.1.50", "user": "newdeveloper"}
+        "bedroom": {"ip": "10.0.1.50", "user": "newdeveloper"}
     }, 
     "lights": {
         "roof1": {"bridge": "bedroom", "id": 1, "x": 500, "y": 500},

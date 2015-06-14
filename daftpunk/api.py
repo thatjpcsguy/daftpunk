@@ -1,5 +1,5 @@
-import DaftPunk
-import Interpreter
+from daftpunk.DaftPunk import DaftPunk
+from daftpunk.interpreter import Interpreter
 from flask import Flask, jsonify, request, render_template
 from argparse import ArgumentParser
 
@@ -38,10 +38,14 @@ def list_lights():
     return jsonify(data=data)
 
 
-if __name__ == '__main__':
+def main():
     parser.add_argument("-c", "--config", dest="config_file", help="which config file to use")
     args = parser.parse_args()
 
     app.i = Interpreter(DaftPunk(args.config_file))
 
     app.run(host="0.0.0.0", debug=True)
+
+
+if __name__ == '__main__':
+    main()
