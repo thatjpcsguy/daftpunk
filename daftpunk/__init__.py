@@ -67,15 +67,17 @@ class DaftPunk():
 
     def colour(self, bulb, color, brightness=False, on=True, transitiontime=None):
         if type(color) == str:
-            if color == "white":
-                return self.saturation(bulb, 0)
-
             h, s, l = Color(color).get_hsl()
+            s = int(s*254)
+            h = int(h*65000)
+        elif type(color) == int:
+            h = color
+            s = 255
 
         data = {
             "transitiontime": self.transitiontime if not transitiontime else transitiontime,
-            "hue": int(h*65000),
-            "sat": int(s*254)
+            "hue": h,
+            "sat": s
         }
 
         if on:
