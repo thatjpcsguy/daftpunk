@@ -1,0 +1,33 @@
+{
+    "name": "Default Setup",
+    "bridges": {
+        "hue-tv":       {"ip": "10.1.1.8", "user": "newdeveloper"},
+        "hue-bedroom":  {"ip": "10.1.1.9", "user": "newdeveloper"}
+    }, 
+    "lights": {
+
+
+        "br-jpcs-roof1": {"bridge": "hue-bedroom", "id": 15, "x": 500, "y": 500},
+        "br-jpcs-roof2": {"bridge": "hue-bedroom", "id": 16, "x": 500, "y": 550},
+        "br-jpcs-lamp": {"bridge": "hue-bedroom", "id": 14, "x": 950, "y": 950},
+
+
+
+        "tv-roof1": {"bridge": "hue-tv", "id": 10, "x": 500, "y": 500},
+        "tv-roof2": {"bridge": "hue-tv", "id": 5, "x": 500, "y": 550},
+        "tv-lamp": {"bridge": "hue-tv", "id": 13, "x": 950, "y": 950},
+
+        "dining-roof1": {"bridge": "hue-tv", "id": 6, "x": 500, "y": 500},
+        "dining-roof2": {"bridge": "hue-tv", "id": 7, "x": 500, "y": 550},
+        "dining-lamp": {"bridge": "hue-tv", "id": 12, "x": 950, "y": 950}
+
+
+    },
+    "groups": {
+        "Living Room": ["tv-roof1", "tv-roof2", "tv-lamp"],
+        "Dining Room": ["dining-roof1", "dining-roof2", "dining-lamp"],
+        "James Room": ["br-jpcs-roof1", "br-jpcs-roof2", "br-jpcs-lamp"]
+    },
+    "sleep": 0.5,
+    "transitiontime": 2
+}

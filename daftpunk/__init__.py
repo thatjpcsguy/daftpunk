@@ -85,12 +85,21 @@ class DaftPunk():
 
         return self.update(bulb, data)
 
-    def on(self, bulb, on):
+    def on(self, bulb, on, brightness=254):
+        h, s, l = Color('white').get_hsl()
+        print h
+        # h = 0.16
+        s = int(s*254)
+        h = int(h*65000)
+        s = 100
+        h = 12000
+
         data = {
             "transitiontime": self.transitiontime,
             "on": on,
-            "sat": 254,
-            "bri": 254
+            "sat": s,
+            "bri": brightness,
+            "hue": h
         }
 
         return self.update(bulb, data)

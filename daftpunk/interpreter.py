@@ -1,4 +1,4 @@
-from daftpunk.DaftPunk import DaftPunk
+from daftpunk import DaftPunk
 from argparse import ArgumentParser
 
 
