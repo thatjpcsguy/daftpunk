@@ -19,5 +19,5 @@ class Bridge():
 if __name__ == '__main__':
     b = Bridge("10.0.1.50", "newdeveloper")
 
-    print b.prefix
-    print b.get_info()
+    # print b.prefix
+    # print b.get_info()

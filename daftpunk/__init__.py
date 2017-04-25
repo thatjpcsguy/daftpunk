@@ -14,10 +14,13 @@ class DaftPunk():
     sleep = None
     groups = {}
     name = None
+    config = None
 
     def __init__(self, config):
         with open(config) as data_file:
             config = json.load(data_file)
+
+        self.config = config
 
         self.name = config["name"]
         #read the config and set the various parts
@@ -87,7 +90,7 @@ class DaftPunk():
 
     def on(self, bulb, on, brightness=254):
         h, s, l = Color('white').get_hsl()
-        print h
+        # print h
         # h = 0.16
         s = int(s*254)
         h = int(h*65000)

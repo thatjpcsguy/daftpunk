@@ -1,6 +1,7 @@
 import requests
 import json
-
+import pickle
+import os
 
 class Group():
     lights = None
@@ -11,7 +12,19 @@ class Group():
         self.name = name
         self.group_id = group_id
         self.lights = lights
+
+        self.brightness = self.get_brightness()
         self.create()
+
+    def get_brightness(self):
+        if os.path.isfile('cache/%s_brightness.pickle' % self.group_id):
+            return pickle.load(open('cache/%s_brightness.pickle' % self.group_id, "rb"))
+        else:
+            return 0
+            
+    def set_brightness(self, brightness):
+        self.brightness = brightness
+        return pickle.dump(self.brightness, open('cache/%s_brightness.pickle' % self.group_id, "wb"))
 
     def create(self, group_id=None):
         if group_id:
@@ -61,3 +74,6 @@ class Group():
             res.append((r.status_code, json.loads(r.text)))
 
         return res
+
+    # def __repr__(self):
+    #     return "<Group "+ self.name + ">"
